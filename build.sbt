@@ -9,7 +9,8 @@ crossVersion := CrossVersion.disabled
 libraryDependencies += "org.scala-sbt" % "sbt" % "1.1.0"
 
 assemblyShadeRules.in(assembly) := Seq(
-  ShadeRule.rename("fastparse.**" -> "sbt.internal.fastparse.@1").inAll
+  ShadeRule.rename("fastparse.**" -> "sbt.internal.fastparse.@1").inAll,
+  ShadeRule.rename("scala.meta.**" -> "sbt.internal.scala.meta.@1").inAll
 )
 assemblyJarName.in(assembly) :=
   name.value + "_" + scalaVersion.value + "-" + version.value + "-assembly.jar"
