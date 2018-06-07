@@ -59,6 +59,7 @@ pomPostProcess := { node =>
   }).transform(node).head
 }
 
+homepage := Some(url("https://github.com/scalameta/metadoc"))
 publishTo := Some {
   if (isSnapshot.value)
     Opts.resolver.sonatypeSnapshots
