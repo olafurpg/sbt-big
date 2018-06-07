@@ -1,7 +1,7 @@
 import scala.xml.{Node => XmlNode, NodeSeq => XmlNodeSeq, _}
 import scala.xml.transform.{RewriteRule, RuleTransformer}
 
-organization := "org.scala-sbt"
+organization := "com.geirsson"
 moduleName := "sbt-big"
 version := "1.1.0"
 crossVersion := CrossVersion.disabled
