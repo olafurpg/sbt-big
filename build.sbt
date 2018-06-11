@@ -4,7 +4,7 @@ import scala.xml.transform.{RewriteRule, RuleTransformer}
 lazy val Version = "1.1.1"
 
 organization := "com.geirsson"
-moduleName := "sbt-big"
+moduleName := "sbt"
 version := Version
 crossVersion := CrossVersion.disabled
 
