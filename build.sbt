@@ -1,7 +1,7 @@
 import scala.xml.{Node => XmlNode, NodeSeq => XmlNodeSeq, _}
 import scala.xml.transform.{RewriteRule, RuleTransformer}
 
-lazy val Version = "1.1.1"
+lazy val Version = "1.1.6"
 
 organization := "com.geirsson"
 moduleName := "sbt"
@@ -10,43 +10,13 @@ crossVersion := CrossVersion.disabled
 
 libraryDependencies += "org.scala-sbt" % "sbt" % Version
 
+// Shade settings
 assemblyShadeRules.in(assembly) := Seq(
   ShadeRule.rename("fastparse.**" -> "sbt.internal.fastparse.@1").inAll
 )
-assemblyJarName.in(assembly) :=
-  name.value + "_" + scalaVersion.value + "-" + version.value + "-assembly.jar"
-
+artifact.in(Compile, packageBin) := artifact.in(Compile, assembly).value
 assemblyOption.in(assembly) ~= { _.copy(includeScala = false) }
-
-Keys.`package`.in(Compile) := {
-  val slimJar = Keys.`package`.in(Compile).value
-  val fatJar =
-    new File(crossTarget.value + "/" + assemblyJarName.in(assembly).value)
-  val _ = assembly.value
-  IO.copy(
-    List(fatJar -> slimJar),
-    overwrite = true,
-    preserveLastModified = false,
-    preserveExecutable = false
-  )
-  slimJar
-}
-
-packagedArtifact.in(Compile).in(packageBin) := {
-  val temp = packagedArtifact.in(Compile).in(packageBin).value
-  val (art, slimJar) = temp
-  val fatJar =
-    new File(crossTarget.value + "/" + assemblyJarName.in(assembly).value)
-  val _ = assembly.value
-  IO.copy(
-    List(fatJar -> slimJar),
-    overwrite = true,
-    preserveLastModified = false,
-    preserveExecutable = false
-  )
-  (art, slimJar)
-}
-
+addArtifact(artifact.in(Compile, packageBin), assembly)
 pomPostProcess := { node =>
   new RuleTransformer(new RewriteRule {
     override def transform(node: XmlNode): XmlNodeSeq = node match {
@@ -59,7 +29,8 @@ pomPostProcess := { node =>
   }).transform(node).head
 }
 
-homepage := Some(url("https://github.com/scalameta/metadoc"))
+// Publish Settings
+homepage := Some(url("https://github.com/olafurpg/sbt-big"))
 publishTo := Some {
   if (isSnapshot.value)
     Opts.resolver.sonatypeSnapshots
@@ -76,13 +47,7 @@ scmInfo := Some(
     "scm:git:git@github.com:olafurpg/sbt-big.git"
   )
 )
-
-publishTo := Some {
-  if (isSnapshot.value)
-    Opts.resolver.sonatypeSnapshots
-  else
-    Opts.resolver.sonatypeStaging
-}
+publishTo := Some(Opts.resolver.sonatypeStaging)
 developers := List(
   Developer(
     "olafurpg",
